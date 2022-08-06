@@ -6,25 +6,33 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:polysleeper/common/notifications.dart';
 
 import 'package:polysleeper/main.dart';
+import 'package:polysleeper/models/schedule.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('Check content of your moms vagina', () async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    tz.initializeTimeZones();
+    final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await initializeNotifications();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    ScheduleModel scheduleModel = ScheduleModel('Late Siesta', [
+      1,
+      3,
+      4,
+      7
+    ], [
+      Sleep('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
+          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1))))
+    ]);
   });
 }

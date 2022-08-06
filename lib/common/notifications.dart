@@ -1,19 +1,15 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/standalone.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-late final SharedPreferences prefs;
-
 enum NotificationChannel { instant, scheduled }
 
 initializeNotifications() async {
-  // Used for persisent notification ids
-  prefs = await SharedPreferences.getInstance();
-
   // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
@@ -26,21 +22,19 @@ initializeNotifications() async {
 
   // Init local storage for notif ids
   for (NotificationChannel channel in NotificationChannel.values) {
-    if (prefs.getInt(channel.name) == null) {
-      prefs.setInt(channel.name, 0);
-    }
+    SharedPreferencesHelper.incrementInt(channel.name);
   }
 
-  if (prefs.getInt('notifications') == null) {
-    prefs.setInt('notifications', 0);
-  }
+  SharedPreferencesHelper.incrementInt('notifications');
 }
 
-NotificationDetails _setUpNotificationDetails(
-    NotificationChannel notificationChannel) {
-  int channelIdCount = prefs.getInt(notificationChannel.name)!;
+Future<NotificationDetails> _setUpNotificationDetails(
+    NotificationChannel notificationChannel) async {
+  int? channelIdCount =
+      await SharedPreferencesHelper.getInt(notificationChannel.name) ?? 0;
+
   AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails('${notificationChannel.name}${channelIdCount}',
+      AndroidNotificationDetails('${notificationChannel.name}$channelIdCount',
           notificationChannel.name,
           channelDescription: 'your channel description',
           importance: Importance.max,
@@ -49,7 +43,8 @@ NotificationDetails _setUpNotificationDetails(
   NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
 
-  prefs.setInt(notificationChannel.name, channelIdCount++);
+  SharedPreferencesHelper.incrementInt(notificationChannel.name);
+  SharedPreferencesHelper.incrementInt('notifications');
 
   return platformChannelSpecifics;
 }
@@ -61,10 +56,10 @@ showNotification(
   String? payload,
 }) async {
   await flutterLocalNotificationsPlugin.show(
-      prefs.getInt('notifications') as int,
+      (await SharedPreferencesHelper.getInt('notifications'))!,
       title,
       body,
-      _setUpNotificationDetails(notificationChannel),
+      await _setUpNotificationDetails(notificationChannel),
       payload: payload);
 }
 
@@ -76,11 +71,30 @@ scheduleNotification(
   String? payload,
 }) async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-      prefs.getInt('notifications') as int,
+      (await SharedPreferencesHelper.getInt('notifications'))!,
       title,
       body,
       dateTime,
-      _setUpNotificationDetails(notificationChannel),
+      await _setUpNotificationDetails(notificationChannel),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime);
+}
+
+periodicallyShowNotification(
+  NotificationChannel notificationChannel,
+  String? title,
+  String? body,
+  TZDateTime dateTime, {
+  String? payload,
+}) async {
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+      (await SharedPreferencesHelper.getInt('notifications'))!,
+      title,
+      body,
+      dateTime.add(const Duration(seconds: 1)),
+      matchDateTimeComponents: DateTimeComponents.time,
+      await _setUpNotificationDetails(notificationChannel),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime);

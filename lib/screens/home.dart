@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polysleeper/models/schedule.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -32,6 +33,19 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+
+    ScheduleModel scheduleModel = ScheduleModel('Late Siesta', [
+      1,
+      3,
+      4,
+      7
+    ], [
+      Sleep('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
+          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1))))
+    ]);
+
+    var jsonData = scheduleModel.toJson();
+    print(jsonData);
   }
 
   @override
