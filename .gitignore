@@ -47,5 +47,7 @@ app.*.map.json
 /android/app/release
 
 # Generated stuff
-*generated*
-*Generated*
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+macos/Flutter/GeneratedPluginRegistrant.swift
