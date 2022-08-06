@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,20 +12,52 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xff201f47),
+        colorScheme: ColorScheme(
+            primary: Colors.green[300]!,
+            primaryContainer: Colors.green[600]!,
+            secondary: Colors.indigo[600]!,
+            secondaryContainer: Colors.deepPurple[800]!,
+            surface: const Color(0xff201f47),
+            background: const Color(0xff201f47),
+            error: Colors.red[400]!,
+            onPrimary: Colors.blueGrey[700]!,
+            onSecondary: const Color(0xFF323367),
+            onSurface: Colors.indigo[400]!,
+            onBackground: Colors.indigo[400]!,
+            onError: Colors.red[50]!,
+            brightness: Brightness.dark),
+        textTheme: Theme.of(context)
+            .textTheme
+            .apply(
+              fontFamily: GoogleFonts.nunito().fontFamily,
+              displayColor: Colors.indigo[300],
+              bodyColor: Colors.indigo,
+            )
+            .merge(TextTheme(
+                headline1: const TextStyle(fontSize: 32, letterSpacing: 0.5),
+                headline2: const TextStyle(fontSize: 28),
+                headline3: GoogleFonts.montserrat(
+                  fontSize: 24,
+                  color: Colors.green[300],
+                ),
+                headline4: GoogleFonts.montserrat(
+                  fontSize: 21,
+                  color: Colors.deepPurple[400],
+                  fontWeight: FontWeight.w300,
+                ))),
+        iconTheme: IconThemeData(
+          color: Colors.blueGrey[700],
+        ),
+        timePickerTheme: TimePickerThemeData(
+            helpTextStyle: TextStyle(color: Colors.indigo[300])),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(
+        title: 'Poly Sleeper',
+      ),
     );
   }
 }
