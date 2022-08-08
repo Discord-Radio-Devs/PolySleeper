@@ -1,7 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/standalone.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -38,8 +36,7 @@ Future<NotificationDetails> _setUpNotificationDetails(
           notificationChannel.name,
           channelDescription: 'your channel description',
           importance: Importance.max,
-          priority: Priority.high,
-          ticker: 'ticker');
+          priority: Priority.high);
   NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
 

@@ -1,14 +1,10 @@
 import 'dart:collection';
-import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/notifications.dart';
-import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart';
 
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 late final SharedPreferences prefs;
@@ -71,7 +67,7 @@ class Sleep {
                 DateTime.now().second),
             tz.local) {
     periodicallyShowNotification(
-        NotificationChannel.instant, name, 'Time for $name 😴', dateTime);
+        NotificationChannel.instant, name, 'Time for $name 😴 NOW!', dateTime);
   }
 
   factory Sleep.fromJson(Map<String, dynamic> jsonData) {
