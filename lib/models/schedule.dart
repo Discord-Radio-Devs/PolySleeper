@@ -30,22 +30,6 @@ class ScheduleModel extends ChangeNotifier {
     return UnmodifiableListView(_sleeps);
   }
 
-  /// Adds [sleep] to the schedule.
-  void add(Sleep sleep) {
-    _sleeps.add(sleep);
-    sleep.createNotification();
-    // This call tells the widgets that are listening to this model to rebuild.
-    notifyListeners();
-  }
-
-  /// Removes [sleep] from schedule.
-  void remove(Sleep sleep) {
-    _sleeps.remove(sleep);
-    sleep.removeSleep();
-
-    notifyListeners();
-  }
-
   factory ScheduleModel.fromJson(String jsonData) {
     var decodedData = json.decode(jsonData);
 
@@ -64,6 +48,22 @@ class ScheduleModel extends ChangeNotifier {
   String toJson() {
     return json.encode(
         {'name': name, 'weekdays': weekdays.join(';'), 'sleeps': sleeps});
+  }
+
+  /// Adds [sleep] to the schedule.
+  void add(Sleep sleep) {
+    _sleeps.add(sleep);
+    sleep.createNotification();
+    // This call tells the widgets that are listening to this model to rebuild.
+    notifyListeners();
+  }
+
+  /// Removes [sleep] from schedule.
+  void remove(Sleep sleep) {
+    _sleeps.remove(sleep);
+    sleep.removeSleepNotification();
+
+    notifyListeners();
   }
 }
 
@@ -85,6 +85,7 @@ class Sleep {
                 DateTime.now().second),
             tz.local);
 
+  /// For creation of a [Sleep] when you already have a notification ID [notiId]
   Sleep.notiId(this.name, this.startTime, this.endTime, this.notiId)
       : dateTime = TZDateTime.from(
             DateTime(
@@ -119,12 +120,12 @@ class Sleep {
     });
   }
 
-  createNotification() async {
+  createNotification([String? message]) async {
     notiId = await periodicallyShowNotification(NotificationChannel.instant,
-        name, 'Time for $name 😴 NOW! He said NOW!', dateTime);
+        name, message ?? 'Time for $name 😴 NOW! He said NOW!', dateTime);
   }
 
-  removeSleep() {
+  removeSleepNotification() {
     removeNotification(notiId);
   }
 }
