@@ -78,15 +78,16 @@ scheduleNotification(
           UILocalNotificationDateInterpretation.absoluteTime);
 }
 
-periodicallyShowNotification(
+Future<int> periodicallyShowNotification(
   NotificationChannel notificationChannel,
   String? title,
   String? body,
   TZDateTime dateTime, {
   String? payload,
 }) async {
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-      (await SharedPreferencesHelper.getInt('notifications'))!,
+  int notiId = (await SharedPreferencesHelper.getInt('notifications'))!;
+  flutterLocalNotificationsPlugin.zonedSchedule(
+      notiId,
       title,
       body,
       dateTime.add(const Duration(seconds: 1)),
@@ -95,4 +96,9 @@ periodicallyShowNotification(
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime);
+  return notiId;
+}
+
+removeNotification(int notiId) {
+  flutterLocalNotificationsPlugin.cancel(notiId);
 }

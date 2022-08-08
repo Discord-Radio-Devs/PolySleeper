@@ -34,18 +34,25 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
 
-    ScheduleModel scheduleModel = ScheduleModel('Late Siesta', [
+    ScheduleModel scheduleModel = ScheduleModel.sleeps('Late Siesta', [
       1,
       3,
       4,
       7
     ], [
       Sleep('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
-          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1))))
+          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)))),
+      Sleep(
+          'Nap',
+          TimeOfDay.fromDateTime(DateTime.now()),
+          TimeOfDay.fromDateTime(
+              DateTime.now().add(const Duration(minutes: 30))))
     ]);
 
     var jsonData = scheduleModel.toJson();
     print(jsonData);
+    var retrievedSchedule = ScheduleModel.fromJson(jsonData);
+    print(retrievedSchedule.toJson());
   }
 
   @override
