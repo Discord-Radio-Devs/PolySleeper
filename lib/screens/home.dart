@@ -57,6 +57,26 @@ class _MyHomePageState extends State<MyHomePage> {
     user.add(scheduleModel);
   }
 
+  void _incrementCounter2(BuildContext context) {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter++;
+    });
+
+    SleepModel sleepModel = SleepModel(
+        'Nap',
+        TimeOfDay.fromDateTime(DateTime.now()),
+        TimeOfDay.fromDateTime(
+            DateTime.now().add(const Duration(minutes: 30))));
+
+    UserModel user = Provider.of<UserModel>(context, listen: false);
+    user.schedules[0].add(sleepModel);
+  }
+
   @override
   Widget build(BuildContext context) {
     UserModel user = Provider.of<UserModel>(context);
@@ -68,22 +88,30 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: ScrollableSafeHaven(
-        children: user.schedules
-            .map((s) => Padding(
-                padding: const EdgeInsets.all(4), child: Text(s.toJson())))
-            .toList(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _incrementCounter(context),
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        body: ScrollableSafeHaven(
+          children: user.schedules
+              .map((s) => Padding(
+                  padding: const EdgeInsets.all(4), child: Text(s.toJson())))
+              .toList(),
+        ),
+        floatingActionButton: ButtonBar(
+          children: [
+            FloatingActionButton(
+              onPressed: () => _incrementCounter(context),
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ),
+            FloatingActionButton(
+              onPressed: () => _incrementCounter2(context),
+              tooltip: 'Increment2',
+              child: const Icon(Icons.check),
+            ),
+          ],
+        ));
   }
 }

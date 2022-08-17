@@ -18,9 +18,8 @@ void main() async {
   final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-  await initializeNotifications();
-
   // await SharedPreferencesHelper.clearAll();
+  await initializeNotifications();
 
   final List<ScheduleModel> sexyAsses =
       await SharedPreferencesHelper.loadAllSchedules();
