@@ -45,4 +45,9 @@ class SharedPreferencesHelper {
 
     return schedules;
   }
+
+  static clearAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
 }

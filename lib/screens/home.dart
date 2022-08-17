@@ -1,10 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:polysleeper/models/schedule.dart';
+import 'package:polysleeper/models/sleep.dart';
+import 'package:polysleeper/models/user.dart';
 import 'package:polysleeper/widgets/scrollablesafehaven.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
+  final String title;
+
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -16,8 +19,6 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -27,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   get counter => _counter;
 
-  void _incrementCounter() {
+  void _incrementCounter(BuildContext context) {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -37,26 +38,29 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
 
-    // ScheduleModel scheduleModel = ScheduleModel.sleeps('Late Siesta', [
-    //   1,
-    //   3,
-    //   4,
-    //   7
-    // ], [
-    //   Sleep('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
-    //       TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)))),
-    //   Sleep(
-    //       'Nap',
-    //       TimeOfDay.fromDateTime(DateTime.now()),
-    //       TimeOfDay.fromDateTime(
-    //           DateTime.now().add(const Duration(minutes: 30))))
-    // ]);
+    ScheduleModel scheduleModel = ScheduleModel.sleeps('Late Siesta', [
+      1,
+      3,
+      4,
+      7
+    ], [
+      SleepModel('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
+          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)))),
+      SleepModel(
+          'Nap',
+          TimeOfDay.fromDateTime(DateTime.now()),
+          TimeOfDay.fromDateTime(
+              DateTime.now().add(const Duration(minutes: 30))))
+    ]);
 
-    // scheduleModel.save();
+    UserModel user = Provider.of<UserModel>(context, listen: false);
+    user.add(scheduleModel);
   }
 
   @override
   Widget build(BuildContext context) {
+    UserModel user = Provider.of<UserModel>(context);
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -70,13 +74,13 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: ScrollableSafeHaven(
-        children: [
-          Text("Bruh has been pressed $counter times"),
-          ...(Random().nextInt(3) > 1 ? [const Text("Random thingy!")] : [])
-        ],
+        children: user.schedules
+            .map((s) => Padding(
+                padding: const EdgeInsets.all(4), child: Text(s.toJson())))
+            .toList(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => _incrementCounter(context),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
