@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/notifications.dart';
+import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart';
 
@@ -54,15 +55,19 @@ class ScheduleModel extends ChangeNotifier {
   void add(Sleep sleep) {
     _sleeps.add(sleep);
     sleep.createNotification();
-    // This call tells the widgets that are listening to this model to rebuild.
-    notifyListeners();
+    save();
   }
 
   /// Removes [sleep] from schedule.
   void remove(Sleep sleep) {
     _sleeps.remove(sleep);
     sleep.removeSleepNotification();
+    save();
+  }
 
+  void save() {
+    SharedPreferencesHelper.saveSchedule(this);
+    // This call tells the widgets that are listening to this model to rebuild.
     notifyListeners();
   }
 }

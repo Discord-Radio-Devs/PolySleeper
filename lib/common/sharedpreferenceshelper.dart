@@ -1,3 +1,4 @@
+import 'package:polysleeper/models/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
@@ -22,5 +23,26 @@ class SharedPreferencesHelper {
   static Future<String?> getString(String channelName) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(channelName);
+  }
+
+  static saveSchedule(ScheduleModel schedule) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("schedule-${schedule.name}", schedule.toJson());
+  }
+
+  static loadAllSchedules() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<ScheduleModel> schedules = [];
+
+    for (final String key in prefs.getKeys()) {
+      if (key.startsWith("schedule-")) {
+        final String? storedContent = prefs.getString(key);
+        if (storedContent != null) {
+          schedules.add(ScheduleModel.fromJson(storedContent));
+        }
+      }
+    }
+
+    return schedules;
   }
 }

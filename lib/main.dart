@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:polysleeper/common/notifications.dart';
+import 'package:polysleeper/common/sharedpreferenceshelper.dart';
+import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/screens/home.dart';
 
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -17,6 +19,10 @@ void main() async {
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 
   await initializeNotifications();
+
+  final List<ScheduleModel> sexyAsses =
+      await SharedPreferencesHelper.loadAllSchedules();
+  print(sexyAsses.map((e) => e.toJson()));
 }
 
 class MyApp extends StatelessWidget {

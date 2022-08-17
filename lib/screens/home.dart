@@ -49,10 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
               DateTime.now().add(const Duration(minutes: 30))))
     ]);
 
-    var jsonData = scheduleModel.toJson();
-    print(jsonData);
-    var retrievedSchedule = ScheduleModel.fromJson(jsonData);
-    print(retrievedSchedule.toJson());
+    scheduleModel.save();
   }
 
   @override
