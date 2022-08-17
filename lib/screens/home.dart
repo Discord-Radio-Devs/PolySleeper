@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:polysleeper/models/schedule.dart';
+import 'package:polysleeper/widgets/scrollablesafehaven.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -34,22 +37,22 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
 
-    ScheduleModel scheduleModel = ScheduleModel.sleeps('Late Siesta', [
-      1,
-      3,
-      4,
-      7
-    ], [
-      Sleep('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
-          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)))),
-      Sleep(
-          'Nap',
-          TimeOfDay.fromDateTime(DateTime.now()),
-          TimeOfDay.fromDateTime(
-              DateTime.now().add(const Duration(minutes: 30))))
-    ]);
+    // ScheduleModel scheduleModel = ScheduleModel.sleeps('Late Siesta', [
+    //   1,
+    //   3,
+    //   4,
+    //   7
+    // ], [
+    //   Sleep('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
+    //       TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)))),
+    //   Sleep(
+    //       'Nap',
+    //       TimeOfDay.fromDateTime(DateTime.now()),
+    //       TimeOfDay.fromDateTime(
+    //           DateTime.now().add(const Duration(minutes: 30))))
+    // ]);
 
-    scheduleModel.save();
+    // scheduleModel.save();
   }
 
   @override
@@ -66,27 +69,11 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.maxHeight,
-              minWidth: constraints.maxWidth,
-            ),
-            child: SafeArea(
-              // glorified bastard
-              minimum: const EdgeInsets.all(16),
-              child: Flex(
-                direction: Axis.vertical,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("Bruh has been pressed $counter times"),
-                ],
-              ),
-            ),
-          ),
-        ),
+      body: ScrollableSafeHaven(
+        children: [
+          Text("Bruh has been pressed $counter times"),
+          ...(Random().nextInt(3) > 1 ? [const Text("Random thingy!")] : [])
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
