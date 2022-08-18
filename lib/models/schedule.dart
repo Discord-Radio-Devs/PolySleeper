@@ -5,26 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:polysleeper/models/sleep.dart';
 
-class ScheduleModel extends ChangeNotifier {
+class ScheduleModel {
   /// Internal, private state of the schedule.
-  final Map<String, SleepModel> _sleeps;
+  final List<SleepModel> _sleeps;
   final String name;
   final List<int> weekdays;
 
-  ScheduleModel(this.name, this.weekdays) : _sleeps = <String, SleepModel>{};
+  ScheduleModel(this.name, this.weekdays) : _sleeps = [];
 
   ScheduleModel.sleeps(this.name, this.weekdays, this._sleeps);
 
   ScheduleModel.sleepsFromJson(
       this.name, this.weekdays, List<String> jsonSleeps)
-      : _sleeps = Map.fromIterable(
-          jsonSleeps.map((String element) => SleepModel.fromJson(element)),
-          key: (sleep) => sleep.name,
-        );
+      : _sleeps = List.from(
+            jsonSleeps.map((String element) => SleepModel.fromJson(element)));
 
   /// An unmodifiable view of the items in the sleeping schedule.
-  UnmodifiableMapView<String, SleepModel> get sleeps {
-    return UnmodifiableMapView(_sleeps);
+  UnmodifiableListView<SleepModel> get sleeps {
+    return UnmodifiableListView(_sleeps);
   }
 
   factory ScheduleModel.fromJson(String jsonData) {
@@ -43,18 +41,13 @@ class ScheduleModel extends ChangeNotifier {
   }
 
   String toJson() {
-    var sleepsList = sleeps.entries.map((e) => e.value).toList();
     return json.encode(
-        {'name': name, 'weekdays': weekdays.join(';'), 'sleeps': sleepsList});
+        {'name': name, 'weekdays': weekdays.join(';'), 'sleeps': sleeps});
   }
 
   /// Adds [sleep] to the schedule.
   void add(SleepModel sleep) {
-    if (_sleeps.containsKey(sleep.name)) {
-      throw Exception(
-          "A sleep with name ${sleep.name} has already been declared!");
-    }
-    _sleeps[sleep.name] = sleep;
+    _sleeps.add(sleep);
     sleep.createNotification();
     _save();
   }
@@ -69,6 +62,6 @@ class ScheduleModel extends ChangeNotifier {
   void _save() {
     SharedPreferencesHelper.saveSchedule(this);
     // This call tells the widgets that are listening to this model to rebuild.
-    notifyListeners();
+    //notifyListeners();
   }
 }
