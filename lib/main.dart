@@ -18,18 +18,18 @@ void main() async {
   final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-  // await SharedPreferencesHelper.clearAll();
+  //await SharedPreferencesHelper.clearAll();
   await initializeNotifications();
 
-  final List<ScheduleModel> sexyAsses =
+  final Map<String, ScheduleModel> sexyAsses =
       await SharedPreferencesHelper.loadAllSchedules();
-  print(sexyAsses.map((e) => e.toJson()));
+  print(sexyAsses.map((key, value) => MapEntry(key, value.toJson())));
 
   runApp(MyApp(loadedSchedules: sexyAsses));
 }
 
 class MyApp extends StatelessWidget {
-  final List<ScheduleModel> loadedSchedules;
+  final Map<String, ScheduleModel> loadedSchedules;
 
   const MyApp({
     Key? key,

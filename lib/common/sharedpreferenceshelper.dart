@@ -32,13 +32,14 @@ class SharedPreferencesHelper {
 
   static loadAllSchedules() async {
     final prefs = await SharedPreferences.getInstance();
-    final List<ScheduleModel> schedules = [];
+    final Map<String, ScheduleModel> schedules = {};
 
     for (final String key in prefs.getKeys()) {
       if (key.startsWith("schedule-")) {
         final String? storedContent = prefs.getString(key);
         if (storedContent != null) {
-          schedules.add(ScheduleModel.fromJson(storedContent));
+          final ScheduleModel schedule = ScheduleModel.fromJson(storedContent);
+          schedules[schedule.name] = schedule;
         }
       }
     }

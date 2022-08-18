@@ -38,23 +38,14 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
 
-    ScheduleModel scheduleModel = ScheduleModel.sleeps('Late Siesta', [
-      1,
-      3,
-      4,
-      7
-    ], [
-      SleepModel('Core Sleep', TimeOfDay.fromDateTime(DateTime.now()),
-          TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 1)))),
-      SleepModel(
-          'Nap',
-          TimeOfDay.fromDateTime(DateTime.now()),
-          TimeOfDay.fromDateTime(
-              DateTime.now().add(const Duration(minutes: 30))))
-    ]);
-
-    UserModel user = Provider.of<UserModel>(context, listen: false);
-    user.add(scheduleModel);
+    ScheduleModel scheduleModel = ScheduleModel('Late Siesta', [1, 3, 4, 7]);
+    SleepModel sleepModel = SleepModel(
+        'Nap',
+        TimeOfDay.fromDateTime(DateTime.now()),
+        TimeOfDay.fromDateTime(
+            DateTime.now().add(const Duration(minutes: 30))));
+    scheduleModel.add(sleepModel);
+    print(scheduleModel.toJson());
   }
 
   void _incrementCounter2(BuildContext context) {
@@ -66,15 +57,13 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
-
     SleepModel sleepModel = SleepModel(
         'Nap',
         TimeOfDay.fromDateTime(DateTime.now()),
         TimeOfDay.fromDateTime(
             DateTime.now().add(const Duration(minutes: 30))));
 
-    UserModel user = Provider.of<UserModel>(context, listen: false);
-    user.schedules[0].add(sleepModel);
+    print(sleepModel.toJson());
   }
 
   @override
@@ -94,9 +83,10 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: ScrollableSafeHaven(
-          children: user.schedules
+          children: user.schedules.entries
               .map((s) => Padding(
-                  padding: const EdgeInsets.all(4), child: Text(s.toJson())))
+                  padding: const EdgeInsets.all(4),
+                  child: Text(s.value.toJson())))
               .toList(),
         ),
         floatingActionButton: ButtonBar(
