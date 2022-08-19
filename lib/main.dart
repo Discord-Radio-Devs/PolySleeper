@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-            value: UserModel.schedules(loadedSchedules))
+            value: UserModel.schedules(loadedSchedules)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

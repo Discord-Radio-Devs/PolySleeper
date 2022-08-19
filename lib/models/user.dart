@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:polysleeper/common/notifications.dart';
 import 'package:polysleeper/models/schedule.dart';
 
 class UserModel extends ChangeNotifier {
@@ -27,6 +28,12 @@ class UserModel extends ChangeNotifier {
   /// Removes [schedule] from user.
   void removeSchedule(ScheduleModel schedule) {
     _schedules.remove(schedule);
+    _save();
+  }
+
+  void clearSchedules() {
+    clearAllNotifications();
+    _schedules.clear();
     _save();
   }
 

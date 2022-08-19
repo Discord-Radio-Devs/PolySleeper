@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/models/sleep.dart';
@@ -30,33 +32,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter(BuildContext context) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
-
-    ScheduleModel scheduleModel = ScheduleModel('Late Siesta', [1, 3, 4, 7]);
-    SleepModel sleepModel = SleepModel(
-        'Nap',
-        TimeOfDay.fromDateTime(DateTime.now()),
-        TimeOfDay.fromDateTime(
-            DateTime.now().add(const Duration(minutes: 30))));
-    scheduleModel.add(sleepModel);
-    print(scheduleModel.toJson());
   }
 
-  void _incrementCounter2(BuildContext context) {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void _createSchedule(BuildContext context) {
+    ScheduleModel scheduleModel = ScheduleModel(
+        'Late Siesta + ${Random().nextInt(100000)}', [1, 3, 4, 7]);
+    Provider.of<UserModel>(context, listen: false).addSchedule(scheduleModel);
+  }
+
+  void _addSleepToSchedule(BuildContext context) {
     SleepModel sleepModel = SleepModel(
         'Nap',
         TimeOfDay.fromDateTime(DateTime.now()),
@@ -64,6 +50,15 @@ class _MyHomePageState extends State<MyHomePage> {
             DateTime.now().add(const Duration(minutes: 30))));
 
     print(sleepModel.toJson());
+    Provider.of<UserModel>(context, listen: false)
+        .schedules
+        .values
+        .last
+        .add(sleepModel);
+  }
+
+  _clearSchedule(BuildContext context) {
+    Provider.of<UserModel>(context, listen: false).clearSchedules();
   }
 
   @override
@@ -82,12 +77,18 @@ class _MyHomePageState extends State<MyHomePage> {
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
         ),
-        body: ScrollableSafeHaven(
-          children: user.schedules.values
-              .map((s) => Padding(
-                  padding: const EdgeInsets.all(4), child: Text(s.toJson())))
-              .toList(),
-        ),
+        body: ScrollableSafeHaven(children: [
+          Text("Bruh has been pressed $_counter times"),
+          ...user.schedules.values
+              .map((s) => ChangeNotifierProvider(
+                  create: (context) => s,
+                  child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Consumer(
+                          builder: (context, ScheduleModel schedule, _) =>
+                              Text(schedule.toJson())))))
+              .toList()
+        ]),
         floatingActionButton: ButtonBar(
           children: [
             FloatingActionButton(
@@ -96,9 +97,19 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Icon(Icons.add),
             ),
             FloatingActionButton(
-              onPressed: () => _incrementCounter2(context),
+              onPressed: () => _addSleepToSchedule(context),
               tooltip: 'Increment2',
-              child: const Icon(Icons.check),
+              child: const Icon(Icons.bedroom_baby),
+            ),
+            FloatingActionButton(
+              onPressed: () => _createSchedule(context),
+              tooltip: 'Create Schedule',
+              child: const Icon(Icons.calendar_month),
+            ),
+            FloatingActionButton(
+              onPressed: () => _clearSchedule(context),
+              tooltip: 'Clear Schedule',
+              child: const Icon(Icons.delete),
             ),
           ],
         ));

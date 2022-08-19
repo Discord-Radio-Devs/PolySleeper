@@ -100,5 +100,13 @@ Future<int> periodicallyShowNotification(
 }
 
 removeNotification(int notiId) {
-  flutterLocalNotificationsPlugin.cancel(notiId);
+  try {
+    flutterLocalNotificationsPlugin.cancel(notiId);
+  } catch (e) {
+    print("Bitch whatcha tryin to delete 🤨");
+  }
+}
+
+clearAllNotifications() {
+  flutterLocalNotificationsPlugin.cancelAll();
 }

@@ -59,6 +59,15 @@ class ScheduleModel extends ChangeNotifier {
     _save();
   }
 
+  void clear() {
+    for (SleepModel sleep in sleeps) {
+      sleep.removeSleepNotification();
+    }
+    _sleeps.clear();
+
+    _save();
+  }
+
   void _save() {
     SharedPreferencesHelper.saveSchedule(this);
     // This call tells the widgets that are listening to this model to rebuild.
