@@ -83,10 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: ScrollableSafeHaven(
-          children: user.schedules.entries
+          children: user.schedules.values
               .map((s) => Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Text(s.value.toJson())))
+                  padding: const EdgeInsets.all(4), child: Text(s.toJson())))
               .toList(),
         ),
         floatingActionButton: ButtonBar(

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:polysleeper/models/sleep.dart';
 
-class ScheduleModel {
+class ScheduleModel extends ChangeNotifier {
   /// Internal, private state of the schedule.
   final List<SleepModel> _sleeps;
   final String name;
@@ -62,6 +62,6 @@ class ScheduleModel {
   void _save() {
     SharedPreferencesHelper.saveSchedule(this);
     // This call tells the widgets that are listening to this model to rebuild.
-    //notifyListeners();
+    notifyListeners();
   }
 }
