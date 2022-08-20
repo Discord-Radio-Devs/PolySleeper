@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/notifications.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
@@ -25,6 +27,10 @@ void main() async {
       await SharedPreferencesHelper.loadAllSchedules();
   print(sexyAsses.map((key, value) => MapEntry(key, value.toJson())));
 
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+  };
+
   runApp(MyApp(loadedSchedules: sexyAsses));
 }
 
@@ -50,6 +56,15 @@ class MyApp extends StatelessWidget {
         home: const MyHomePage(
           title: 'Poly Sleeper',
         ),
+        builder: (context, widget) {
+          Widget error = const Text('Could not generate Scaffold/Navigation');
+          if (widget is Scaffold || widget is Navigator) {
+            error = Scaffold(body: Center(child: error));
+          }
+          ErrorWidget.builder = (errorDetails) => error;
+          if (widget != null) return widget;
+          throw ('widget is null');
+        },
       ),
     );
   }
