@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/notifications.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
@@ -12,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+
+import 'widgets/screencontainer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +27,9 @@ void main() async {
       await SharedPreferencesHelper.loadAllSchedules();
   print(sexyAsses.map((key, value) => MapEntry(key, value.toJson())));
 
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-  };
+  // FlutterError.onError = (details) {
+  //   FlutterError.presentError(details);
+  // };
 
   runApp(MyApp(loadedSchedules: sexyAsses));
 }
@@ -51,21 +51,13 @@ class MyApp extends StatelessWidget {
             value: UserModel.schedules(loadedSchedules)),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: getDefaultTheme(context),
-        home: const MyHomePage(
-          title: 'Poly Sleeper',
-        ),
-        builder: (context, widget) {
-          Widget error = const Text('Could not generate Scaffold/Navigation');
-          if (widget is Scaffold || widget is Navigator) {
-            error = Scaffold(body: Center(child: error));
-          }
-          ErrorWidget.builder = (errorDetails) => error;
-          if (widget != null) return widget;
-          throw ('widget is null');
-        },
-      ),
+          debugShowCheckedModeBanner: false,
+          theme: getDefaultTheme(context),
+          home: const ScreenContainer(
+            child: MyHomePage(
+              title: 'Poly Sleeper',
+            ),
+          )),
     );
   }
 }

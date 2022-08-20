@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/models/sleep.dart';
 import 'package:polysleeper/models/user.dart';
-import 'package:polysleeper/widgets/scrollablesafehaven.dart';
 import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -33,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter(BuildContext context) {
     setState(() {
       _counter++;
+      throw Exception("Your mommy");
     });
   }
 
@@ -71,47 +71,41 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
-        ),
-        body: ScrollableSafeHaven(children: [
-          Text("Bruh has been pressed $_counter times"),
-          ...user.schedules.values
-              .map((s) => ChangeNotifierProvider(
-                  create: (context) => s,
-                  child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Consumer(
-                          builder: (context, ScheduleModel schedule, _) =>
-                              Text(schedule.toJson())))))
-              .toList()
-        ]),
-        floatingActionButton: ButtonBar(
-          children: [
-            FloatingActionButton(
-              onPressed: () => _incrementCounter(context),
-              tooltip: 'Increment',
-              child: const Icon(Icons.add),
-            ),
-            FloatingActionButton(
-              onPressed: () => _addSleepToSchedule(context),
-              tooltip: 'Increment2',
-              child: const Icon(Icons.bedroom_baby),
-            ),
-            FloatingActionButton(
-              onPressed: () => _createSchedule(context),
-              tooltip: 'Create Schedule',
-              child: const Icon(Icons.calendar_month),
-            ),
-            FloatingActionButton(
-              onPressed: () => _clearSchedule(context),
-              tooltip: 'Clear Schedule',
-              child: const Icon(Icons.delete),
-            ),
-          ],
-        ));
+    return Column(children: [
+      Text("Bruh has been pressed $_counter times"),
+      ...user.schedules.values
+          .map((s) => ChangeNotifierProvider(
+              create: (context) => s,
+              child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Consumer(
+                      builder: (context, ScheduleModel schedule, _) =>
+                          Text(schedule.toJson())))))
+          .toList(),
+      ButtonBar(
+        children: [
+          FloatingActionButton(
+            onPressed: () => _incrementCounter(context),
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+          FloatingActionButton(
+            onPressed: () => _addSleepToSchedule(context),
+            tooltip: 'Increment2',
+            child: const Icon(Icons.bedroom_baby),
+          ),
+          FloatingActionButton(
+            onPressed: () => _createSchedule(context),
+            tooltip: 'Create Schedule',
+            child: const Icon(Icons.calendar_month),
+          ),
+          FloatingActionButton(
+            onPressed: () => _clearSchedule(context),
+            tooltip: 'Clear Schedule',
+            child: const Icon(Icons.delete),
+          ),
+        ],
+      )
+    ]);
   }
 }
