@@ -24,7 +24,6 @@ class Reminder {
   }
 
   String toJson() {
-    DateTime now = DateTime.now();
     return json.encode({
       'name': title,
       'body': body,

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -6,8 +5,6 @@ import 'package:polysleeper/common/notifications.dart';
 import 'package:polysleeper/common/timeofdayhelper.dart';
 import 'package:polysleeper/models/reminder.dart';
 import 'package:timezone/timezone.dart';
-
-import 'package:timezone/timezone.dart' as tz;
 
 class SleepModel extends ChangeNotifier {
   final String name;

@@ -1,15 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:polysleeper/models/reminder.dart';
 import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/models/sleep.dart';
 import 'package:polysleeper/models/user.dart';
 import 'package:provider/provider.dart';
-
-import 'package:timezone/timezone.dart';
-
-import 'package:timezone/timezone.dart' as tz;
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -68,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .last
         .sleeps
         .last
-        .createReminder(Duration(minutes: 1), "Reminder to go to sleep",
+        .createReminder(const Duration(minutes: 1), "Reminder to go to sleep",
             notiBody: "Bro this is just a reminder");
   }
 
