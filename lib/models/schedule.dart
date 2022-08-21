@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
+import 'package:polysleeper/models/reminder.dart';
 import 'package:polysleeper/models/sleep.dart';
 
 class ScheduleModel extends ChangeNotifier {
@@ -48,24 +49,24 @@ class ScheduleModel extends ChangeNotifier {
   /// Adds [sleep] to the schedule.
   void add(SleepModel sleep) {
     _sleeps.add(sleep);
-    sleep.createNotification();
+    sleep.addListener(() => _save());
+    sleep.addOngoing(Reminder(sleep.dateTime, sleep.name,
+        notiBody: "It's time for ${sleep.name}"));
     _save();
   }
 
   /// Removes [sleep] from schedule.
   void remove(SleepModel sleep) {
     _sleeps.remove(sleep);
-    sleep.removeSleepNotification();
+    sleep.removeOngoing();
+    sleep.removeSleepReminders();
     _save();
   }
 
   void clear() {
     for (SleepModel sleep in sleeps) {
-      sleep.removeSleepNotification();
+      remove(sleep);
     }
-    _sleeps.clear();
-
-    _save();
   }
 
   void _save() {

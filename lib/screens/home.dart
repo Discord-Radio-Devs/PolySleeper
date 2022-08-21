@@ -15,7 +15,7 @@ class MyHomePage extends StatefulWidget {
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
 
-  // This class is the configuration for the state. It holds the values (in this
+  // This class is the configuration for the state yay. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
@@ -46,8 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SleepModel sleepModel = SleepModel(
         'Nap',
         TimeOfDay.fromDateTime(DateTime.now()),
-        TimeOfDay.fromDateTime(
-            DateTime.now().add(const Duration(minutes: 30))));
+        TimeOfDay.fromDateTime(DateTime.now().add(const Duration(minutes: 1))));
 
     print(sleepModel.toJson());
     Provider.of<UserModel>(context, listen: false)

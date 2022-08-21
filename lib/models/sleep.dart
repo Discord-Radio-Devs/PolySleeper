@@ -2,16 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/notifications.dart';
+import 'package:polysleeper/models/reminder.dart';
 import 'package:timezone/timezone.dart';
 
 import 'package:timezone/timezone.dart' as tz;
 
-class SleepModel {
+class SleepModel extends ChangeNotifier {
   final String name;
   final TZDateTime dateTime;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
-  int notiId = -1;
+  List<Reminder> _reminders = [];
+  Reminder? ongoing;
 
   SleepModel(this.name, this.startTime, this.endTime)
       : dateTime = TZDateTime.from(
@@ -24,9 +26,24 @@ class SleepModel {
                 DateTime.now().second),
             tz.local);
 
-  /// For creation of a [SleepModel] when you already have a notification ID [notiId]
-  SleepModel.notiId(this.name, this.startTime, this.endTime, this.notiId)
+  /// For creation of a [SleepModel] when you already have a notification ID [reminders]
+  SleepModel.reminders(
+      this.name, this.startTime, this.endTime, this.ongoing, this._reminders)
       : dateTime = TZDateTime.from(
+            DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                startTime.hour,
+                startTime.minute,
+                DateTime.now().second),
+            tz.local);
+
+  SleepModel.remindersFromJson(this.name, this.startTime, this.endTime,
+      this.ongoing, List<String> jsonReminders)
+      : _reminders = List.from(
+            jsonReminders.map((String element) => Reminder.fromJson(element))),
+        dateTime = TZDateTime.from(
             DateTime(
                 DateTime.now().year,
                 DateTime.now().month,
@@ -38,18 +55,26 @@ class SleepModel {
 
   factory SleepModel.fromJson(String jsonData) {
     var decodedData = json.decode(jsonData);
-    return SleepModel.notiId(
+    return SleepModel.remindersFromJson(
         decodedData['name'],
         TimeOfDay.fromDateTime(DateTime.parse(decodedData['startTime'])),
         TimeOfDay.fromDateTime(DateTime.parse(decodedData['endTime'])),
-        decodedData['notiId']);
+        Reminder.fromJson(decodedData['ongoing']),
+        List.castFrom(decodedData['reminders']));
+  }
+
+  int get durationInMins {
+    var endTimeMins = endTime.hour * 60 + endTime.minute;
+    var startTimeMins = startTime.hour * 60 + startTime.minute;
+    return endTimeMins - startTimeMins;
   }
 
   String toJson() {
     DateTime now = DateTime.now();
     return json.encode({
       'name': name,
-      'notiId': notiId,
+      'ongoing': ongoing,
+      'reminders': _reminders,
       'startTime': DateTime(
               now.year, now.month, now.day, startTime.hour, startTime.minute)
           .toString(),
@@ -59,12 +84,43 @@ class SleepModel {
     });
   }
 
-  createNotification([String? message]) async {
-    notiId = await periodicallyShowNotification(NotificationChannel.instant,
-        name, message ?? 'Time for $name 😴 NOW! He said NOW!', dateTime);
+  addReminder(Reminder reminder) async {
+    reminder.notiId = await periodicallyShowNotification(
+        NotificationChannel.instant,
+        reminder.title,
+        reminder.body,
+        reminder.reminderTime);
+    _reminders.add(reminder);
+    _save();
   }
 
-  removeSleepNotification() {
-    removeNotification(notiId);
+  addOngoing(Reminder ongoing) async {
+    ongoing.notiId = await periodicallyShowNotification(
+        NotificationChannel.instant,
+        ongoing.title,
+        ongoing.body,
+        ongoing.reminderTime,
+        ongoing: true,
+        timeoutAfter: durationInMins * 60 * 1000);
+    this.ongoing = ongoing;
+    _save();
+  }
+
+  removeOngoing() {
+    if (ongoing != null) {
+      removeReminders([ongoing!]);
+      ongoing = null;
+      _save();
+    }
+  }
+
+  removeSleepReminders() {
+    removeReminders(_reminders);
+    _reminders.clear();
+    _save();
+  }
+
+  void _save() {
+    notifyListeners();
   }
 }

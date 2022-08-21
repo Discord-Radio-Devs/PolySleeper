@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
+import 'package:polysleeper/models/reminder.dart';
 import 'package:timezone/standalone.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -27,16 +28,22 @@ initializeNotifications() async {
 }
 
 Future<NotificationDetails> _setUpNotificationDetails(
-    NotificationChannel notificationChannel) async {
+    NotificationChannel notificationChannel,
+    {bool? ongoing,
+    int? timeoutAfter}) async {
   int? channelIdCount =
       await SharedPreferencesHelper.getInt(notificationChannel.name) ?? 0;
 
   AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails('${notificationChannel.name}$channelIdCount',
-          notificationChannel.name,
-          channelDescription: 'your channel description',
-          importance: Importance.max,
-          priority: Priority.high);
+      AndroidNotificationDetails(
+    '${notificationChannel.name}$channelIdCount',
+    notificationChannel.name,
+    channelDescription: 'your channel description',
+    importance: Importance.max,
+    priority: Priority.high,
+    ongoing: ongoing ?? false,
+    timeoutAfter: timeoutAfter,
+  );
   NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
 
@@ -79,29 +86,34 @@ scheduleNotification(
 }
 
 Future<int> periodicallyShowNotification(
-  NotificationChannel notificationChannel,
-  String? title,
-  String? body,
-  TZDateTime dateTime, {
-  String? payload,
-}) async {
-  int notiId = (await SharedPreferencesHelper.getInt('notifications'))!;
+    NotificationChannel notificationChannel,
+    String? title,
+    String? body,
+    TZDateTime dateTime,
+    {String? payload,
+    bool? ongoing,
+    int? timeoutAfter}) async {
+  int notiId = ((await SharedPreferencesHelper.getInt('notifications'))!);
   flutterLocalNotificationsPlugin.zonedSchedule(
       notiId,
       title,
       body,
       dateTime.add(const Duration(seconds: 1)),
       matchDateTimeComponents: DateTimeComponents.time,
-      await _setUpNotificationDetails(notificationChannel),
+      await _setUpNotificationDetails(notificationChannel,
+          ongoing: ongoing, timeoutAfter: timeoutAfter),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime);
+
   return notiId;
 }
 
-removeNotification(int notiId) {
+removeReminders(List<Reminder> reminders) {
   try {
-    flutterLocalNotificationsPlugin.cancel(notiId);
+    for (Reminder r in reminders) {
+      flutterLocalNotificationsPlugin.cancel(r.notiId);
+    }
   } catch (e) {
     print("Bitch whatcha tryin to delete 🤨");
   }
