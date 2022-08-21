@@ -11,7 +11,7 @@ class Reminder {
   final String body;
 
   Reminder(this.reminderTime, this.title, {String? notiBody})
-      : body = notiBody ?? "Time for $title 😴 NOW! He said NOW!";
+      : body = notiBody ?? "Reminder to go to sleep soon! 🏃‍♂️";
   Reminder.notiId(this.body, this.reminderTime, this.title, this.notiId);
 
   factory Reminder.fromJson(String jsonData) {

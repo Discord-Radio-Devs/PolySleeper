@@ -84,7 +84,21 @@ class SleepModel extends ChangeNotifier {
     });
   }
 
-  addReminder(Reminder reminder) async {
+  createReminder(
+    Duration duration,
+    String title, {
+    String? notiBody,
+  }) async {
+    DateTime now = DateTime.now();
+    Reminder reminder = Reminder(
+        TZDateTime.from(
+            DateTime(now.year, now.month, now.day, startTime.hour,
+                    startTime.minute)
+                .subtract(duration),
+            tz.local),
+        title,
+        notiBody: notiBody);
+
     reminder.notiId = await periodicallyShowNotification(
         NotificationChannel.instant,
         reminder.title,

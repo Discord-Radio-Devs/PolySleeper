@@ -1,10 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:polysleeper/models/reminder.dart';
 import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/models/sleep.dart';
 import 'package:polysleeper/models/user.dart';
 import 'package:provider/provider.dart';
+
+import 'package:timezone/timezone.dart';
+
+import 'package:timezone/timezone.dart' as tz;
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -45,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _addSleepToSchedule(BuildContext context) {
     SleepModel sleepModel = SleepModel(
         'Nap',
-        TimeOfDay.fromDateTime(DateTime.now()),
+        TimeOfDay.fromDateTime(DateTime.now().add(const Duration(minutes: 2))),
         TimeOfDay.fromDateTime(DateTime.now().add(const Duration(minutes: 1))));
 
     print(sleepModel.toJson());
@@ -54,6 +59,17 @@ class _MyHomePageState extends State<MyHomePage> {
         .values
         .last
         .add(sleepModel);
+  }
+
+  void _addReminderToSleep(BuildContext context) {
+    Provider.of<UserModel>(context, listen: false)
+        .schedules
+        .values
+        .last
+        .sleeps
+        .last
+        .createReminder(Duration(minutes: 1), "Reminder to go to sleep",
+            notiBody: "Bro this is just a reminder");
   }
 
   _clearSchedule(BuildContext context) {
@@ -92,6 +108,11 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () => _addSleepToSchedule(context),
             tooltip: 'Increment2',
             child: const Icon(Icons.bedroom_baby),
+          ),
+          FloatingActionButton(
+            onPressed: () => _addReminderToSleep(context),
+            tooltip: 'Create Reminder',
+            child: const Icon(Icons.schedule),
           ),
           FloatingActionButton(
             onPressed: () => _createSchedule(context),
