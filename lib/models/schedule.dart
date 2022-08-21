@@ -65,8 +65,11 @@ class ScheduleModel extends ChangeNotifier {
 
   void clear() {
     for (SleepModel sleep in sleeps) {
-      remove(sleep);
+      sleep.removeOngoing();
+      sleep.removeSleepReminders();
     }
+    _sleeps.clear();
+    _save();
   }
 
   void _save() {

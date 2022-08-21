@@ -28,9 +28,7 @@ class Reminder {
     return json.encode({
       'name': title,
       'body': body,
-      'reminderTime': DateTime(now.year, now.month, now.day, reminderTime.hour,
-              reminderTime.minute)
-          .toString(),
+      'reminderTime': DateTime.parse(reminderTime.toIso8601String()).toString(),
       'notiId': notiId
     });
   }

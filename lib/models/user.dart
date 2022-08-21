@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:polysleeper/common/notifications.dart';
+import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:polysleeper/models/schedule.dart';
 
 class UserModel extends ChangeNotifier {
@@ -33,7 +34,10 @@ class UserModel extends ChangeNotifier {
 
   void clearSchedules() {
     clearAllNotifications();
-    _schedules.clear();
+    _schedules.forEach((key, value) {
+      value.clear();
+      SharedPreferencesHelper.deleteSchedule(value.name);
+    });
     _save();
   }
 

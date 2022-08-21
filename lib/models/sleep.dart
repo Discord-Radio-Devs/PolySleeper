@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:polysleeper/common/notifications.dart';
+import 'package:polysleeper/common/timeofdayhelper.dart';
 import 'package:polysleeper/models/reminder.dart';
 import 'package:timezone/timezone.dart';
 
@@ -16,42 +18,28 @@ class SleepModel extends ChangeNotifier {
   Reminder? ongoing;
 
   SleepModel(this.name, this.startTime, this.endTime)
-      : dateTime = TZDateTime.from(
-            DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
-                startTime.hour,
-                startTime.minute,
-                DateTime.now().second),
-            tz.local);
+      : dateTime = tzTimeOfToday(startTime);
+
+  SleepModel.calcEndTime(this.name, this.startTime, sleepDuration)
+      : dateTime = tzTimeOfToday(startTime),
+        endTime =
+            TimeOfDay.fromDateTime(tzTimeOfToday(startTime).add(sleepDuration));
+
+  SleepModel.calcStartTime(this.name, this.endTime, sleepDuration)
+      : dateTime = tzTimeOfToday(endTime),
+        startTime = TimeOfDay.fromDateTime(
+            tzTimeOfToday(endTime).subtract(sleepDuration));
 
   /// For creation of a [SleepModel] when you already have a notification ID [reminders]
   SleepModel.reminders(
       this.name, this.startTime, this.endTime, this.ongoing, this._reminders)
-      : dateTime = TZDateTime.from(
-            DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
-                startTime.hour,
-                startTime.minute,
-                DateTime.now().second),
-            tz.local);
+      : dateTime = tzTimeOfToday(startTime);
 
   SleepModel.remindersFromJson(this.name, this.startTime, this.endTime,
       this.ongoing, List<String> jsonReminders)
       : _reminders = List.from(
             jsonReminders.map((String element) => Reminder.fromJson(element))),
-        dateTime = TZDateTime.from(
-            DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
-                startTime.hour,
-                startTime.minute,
-                DateTime.now().second),
-            tz.local);
+        dateTime = tzTimeOfToday(startTime);
 
   factory SleepModel.fromJson(String jsonData) {
     var decodedData = json.decode(jsonData);
@@ -64,23 +52,19 @@ class SleepModel extends ChangeNotifier {
   }
 
   int get durationInMins {
+    var minsInDay = 24 * 60;
     var endTimeMins = endTime.hour * 60 + endTime.minute;
     var startTimeMins = startTime.hour * 60 + startTime.minute;
-    return endTimeMins - startTimeMins;
+    return (endTimeMins + minsInDay - startTimeMins) % minsInDay;
   }
 
   String toJson() {
-    DateTime now = DateTime.now();
     return json.encode({
       'name': name,
       'ongoing': ongoing,
       'reminders': _reminders,
-      'startTime': DateTime(
-              now.year, now.month, now.day, startTime.hour, startTime.minute)
-          .toString(),
-      'endTime':
-          DateTime(now.year, now.month, now.day, endTime.hour, endTime.minute)
-              .toString()
+      'startTime': timeOfToday(startTime).toString(),
+      'endTime': timeOfToday(endTime).toString()
     });
   }
 
@@ -89,14 +73,8 @@ class SleepModel extends ChangeNotifier {
     String title, {
     String? notiBody,
   }) async {
-    DateTime now = DateTime.now();
     Reminder reminder = Reminder(
-        TZDateTime.from(
-            DateTime(now.year, now.month, now.day, startTime.hour,
-                    startTime.minute)
-                .subtract(duration),
-            tz.local),
-        title,
+        tzTimeOfToday(startTime).subtract(duration), title,
         notiBody: notiBody);
 
     reminder.notiId = await periodicallyShowNotification(

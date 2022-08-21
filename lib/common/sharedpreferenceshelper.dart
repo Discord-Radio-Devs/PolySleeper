@@ -47,6 +47,11 @@ class SharedPreferencesHelper {
     return schedules;
   }
 
+  static deleteSchedule(String scheduleName) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.remove("schedule-$scheduleName");
+  }
+
   static clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
