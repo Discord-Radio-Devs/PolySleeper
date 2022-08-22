@@ -31,6 +31,7 @@ class UserModel extends ChangeNotifier {
     schedule.active = true;
     _schedules[activeName] = schedule;
     _schedules[schedule.name] = schedule;
+    schedule.addListener(() => _save());
 
     _save();
   }
@@ -40,7 +41,11 @@ class UserModel extends ChangeNotifier {
       throw Exception(
           "The schedule to set active is not registered for this user");
     }
+    if (_schedules[activeName] != null) {
+      _schedules[activeName]!.active = false;
+    }
     _schedules[activeName] = _schedules[scheduleName]!;
+    _schedules[activeName]!.active = true;
 
     _save();
   }
@@ -48,12 +53,11 @@ class UserModel extends ChangeNotifier {
   /// Removes [schedule] from user.
   void removeSchedule(ScheduleModel schedule) {
     if (schedule.active) {
-      _schedules.removeWhere((key, value) => key == UserModel.activeName);
-      SharedPreferencesHelper.deleteSchedule(UserModel.activeName);
+      _schedules.remove(activeName);
+      SharedPreferencesHelper.deleteSchedule(activeName);
     }
 
-    _schedules.removeWhere(((key, value) => key == schedule.name));
-
+    _schedules.remove(schedule.name);
     SharedPreferencesHelper.deleteSchedule(schedule.name);
 
     _save();
@@ -62,12 +66,10 @@ class UserModel extends ChangeNotifier {
   void clearSchedules() async {
     clearAllNotifications();
     _schedules.forEach((key, value) {
-      if (value.active) {
-        SharedPreferencesHelper.deleteSchedule(UserModel.activeName);
-      }
-
       SharedPreferencesHelper.deleteSchedule(value.name);
     });
+
+    SharedPreferencesHelper.deleteSchedule(activeName);
 
     _schedules.clear();
     _save();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:polysleeper/common/notifications.dart';
 import 'package:polysleeper/common/sharedpreferenceshelper.dart';
 import 'package:polysleeper/models/schedule.dart';
@@ -6,10 +7,8 @@ import 'package:polysleeper/models/user.dart';
 import 'package:polysleeper/screens/home.dart';
 import 'package:polysleeper/themes/default_theme.dart';
 import 'package:provider/provider.dart';
-
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 import 'widgets/screencontainer.dart';
 
@@ -20,7 +19,7 @@ void main() async {
   final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-  // await SharedPreferencesHelper.clearAll();
+  await SharedPreferencesHelper.clearAll();
   await initializeNotifications();
 
   final Map<String, ScheduleModel> sexyAsses =
