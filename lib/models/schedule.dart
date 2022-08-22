@@ -11,13 +11,16 @@ class ScheduleModel extends ChangeNotifier {
   final List<SleepModel> _sleeps;
   final String name;
   final List<int> weekdays;
+  bool active = false;
 
-  ScheduleModel(this.name, this.weekdays) : _sleeps = [];
+  ScheduleModel(this.name, this.weekdays)
+      : _sleeps = [],
+        active = true;
 
   ScheduleModel.sleeps(this.name, this.weekdays, this._sleeps);
 
   ScheduleModel.sleepsFromJson(
-      this.name, this.weekdays, List<String> jsonSleeps)
+      this.name, this.weekdays, this.active, List<String> jsonSleeps)
       : _sleeps = List.from(
             jsonSleeps.map((String element) => SleepModel.fromJson(element)));
 
@@ -38,12 +41,17 @@ class ScheduleModel extends ChangeNotifier {
             .split(';')
             .map((e) => int.parse(e))
             .toList()),
+        decodedData['active'],
         List.castFrom(decodedData['sleeps']));
   }
 
   String toJson() {
-    return json.encode(
-        {'name': name, 'weekdays': weekdays.join(';'), 'sleeps': sleeps});
+    return json.encode({
+      'name': name,
+      'weekdays': weekdays.join(';'),
+      'active': active,
+      'sleeps': sleeps
+    });
   }
 
   /// Adds [sleep] to the schedule.

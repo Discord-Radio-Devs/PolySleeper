@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/models/sleep.dart';
 import 'package:polysleeper/models/user.dart';
+import 'package:polysleeper/widgets/schedule.dart';
 import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -50,17 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     print(sleepModel.toJson());
     Provider.of<UserModel>(context, listen: false)
-        .schedules
-        .values
-        .last
+        .schedules[UserModel.activeName]!
         .add(sleepModel);
   }
 
   void _addReminderToSleep(BuildContext context) {
     Provider.of<UserModel>(context, listen: false)
-        .schedules
-        .values
-        .last
+        .schedules[UserModel.activeName]!
         .sleeps
         .last
         .createReminder(const Duration(minutes: 1), "Reminder to go to sleep",
@@ -75,30 +72,33 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     UserModel user = Provider.of<UserModel>(context);
 
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Column(children: [
       Text("Bruh has been pressed $_counter times"),
-      ...user.schedules.values
-          .map((s) => ChangeNotifierProvider(
-              create: (context) => s,
-              child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Consumer(
-                      builder: (context, ScheduleModel schedule, _) =>
-                          Text(schedule.toJson())))))
-          .toList(),
+      if (user.schedules[UserModel.activeName] != null)
+        // Ok this is a problem. Right now the create fires when the object INSIDE user.schedules[UserModel.activeName] changes
+        // So lets say a schedule with name Siesta is added first and becomes active. The create creates a reference to this schedule
+        // If the active schedule would change however, the create would still only listen to the Siesta schedule and never notice
+        // the content of user.schedules, and thus the active schedule, actually changed
+
+        // TODO: Im too stupid to figure this out, maybe Lancear will help me fix it
+        ChangeNotifierProvider<ScheduleModel>(
+          create: (context) => user.schedules[UserModel.activeName]!,
+          child: const Schedule(),
+        )
+      else
+        const Text("No active schedule found!"),
+      // ...user.schedules.values
+      //     .map((s) => ChangeNotifierProvider<ScheduleModel>(
+      //         create: (context) => s,
+      //         child: Padding(
+      //             padding: const EdgeInsets.all(4),
+      //             child: Consumer<ScheduleModel>(
+      //                 builder: (context, ScheduleModel schedule, _) =>
+      //                     Text(schedule.toJson())))))
+      //     .toList(),
       ButtonBar(
+        layoutBehavior: ButtonBarLayoutBehavior.padded,
         children: [
-          FloatingActionButton(
-            onPressed: () => _incrementCounter(context),
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
           FloatingActionButton(
             onPressed: () => _addSleepToSchedule(context),
             tooltip: 'Increment2',

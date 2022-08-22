@@ -1,4 +1,5 @@
 import 'package:polysleeper/models/schedule.dart';
+import 'package:polysleeper/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
@@ -27,6 +28,9 @@ class SharedPreferencesHelper {
 
   static saveSchedule(ScheduleModel schedule) async {
     final prefs = await SharedPreferences.getInstance();
+    if (schedule.active) {
+      prefs.setString("schedule-${UserModel.activeName}", schedule.toJson());
+    }
     prefs.setString("schedule-${schedule.name}", schedule.toJson());
   }
 
@@ -39,7 +43,12 @@ class SharedPreferencesHelper {
         final String? storedContent = prefs.getString(key);
         if (storedContent != null) {
           final ScheduleModel schedule = ScheduleModel.fromJson(storedContent);
-          schedules[schedule.name] = schedule;
+          // When a schedule has already been restored with a given name the second entry indicates it is active as schedule.name is unique
+          if (schedules[schedule.name] != null) {
+            schedules[UserModel.activeName] = schedule;
+          } else {
+            schedules[schedule.name] = schedule;
+          }
         }
       }
     }
