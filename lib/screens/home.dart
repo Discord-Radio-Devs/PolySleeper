@@ -170,8 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Map<String, bool>?> _getTimeInputs(BuildContext context) async {
     return await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-              title: const Text('Choose your operators'),
+        builder: (context) => const AlertDialog(
+              title: Text('Choose your operators'),
               // actions: [
               //   TextButton(
               //       child: Text("Cancel".toUpperCase()),
@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
               //       child: Text("Confirm".toUpperCase()),
               //       onPressed: () => Navigator.pop(context, newSleepName))
               // ],
-              content: const Center(heightFactor: 1, child: TimeInputPicker()),
+              content: Center(heightFactor: 1, child: TimeInputPicker()),
             ).build(context));
   }
 
