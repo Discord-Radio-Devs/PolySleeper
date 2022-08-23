@@ -14,7 +14,6 @@ class Sleep extends StatefulWidget {
 }
 
 class _SleepState extends State<Sleep> {
-  late ScheduleModel schedule;
   late FocusNode _focusNode;
   bool _focused = false;
   late FocusAttachment _focusAttachment;
@@ -22,6 +21,7 @@ class _SleepState extends State<Sleep> {
 
   @override
   void initState() {
+    super.initState();
     _focusNode = FocusNode(debugLabel: 'Button');
     _focusNode.addListener(_handleFocusChange);
     _focusAttachment = _focusNode.attach(context);
@@ -36,7 +36,7 @@ class _SleepState extends State<Sleep> {
   }
 
   _onDeletePressed(BuildContext context, SleepModel sleep) {
-    schedule.remove(sleep);
+    widget.schedule.remove(sleep);
   }
 
   _onRenamePressed(BuildContext context, SleepModel sleep) async {

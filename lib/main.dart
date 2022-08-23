@@ -24,7 +24,8 @@ void main() async {
 
   final Map<String, ScheduleModel> sexyAsses =
       await SharedPreferencesHelper.loadAllSchedules();
-  print(sexyAsses.map((key, value) => MapEntry(key, value.toJson())));
+  debugPrint(
+      sexyAsses.map((key, value) => MapEntry(key, value.toJson())).toString());
 
   // FlutterError.onError = (details) {
   //   FlutterError.presentError(details);
