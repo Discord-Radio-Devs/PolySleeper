@@ -16,6 +16,7 @@ class ScreenContainer extends StatelessWidget {
             FlutterError.presentError(details);
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text((details.summary).toString()),
+              backgroundColor: Theme.of(context).errorColor,
             ));
           };
 

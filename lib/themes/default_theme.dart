@@ -38,10 +38,14 @@ ThemeData getDefaultTheme(BuildContext context) {
               color: Colors.deepPurple[400],
               fontWeight: FontWeight.w300,
             ))),
+    dialogTheme: const DialogTheme(backgroundColor: Color(0xff201f47)),
     iconTheme: IconThemeData(
-      color: Colors.blueGrey[700],
+      color: Colors.green[300]!,
     ),
     timePickerTheme: TimePickerThemeData(
         helpTextStyle: TextStyle(color: Colors.indigo[300])),
+    cardTheme: const CardTheme(
+      color: Color.fromARGB(255, 44, 44, 97),
+    ),
   );
 }

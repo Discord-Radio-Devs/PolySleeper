@@ -7,32 +7,32 @@ import 'package:polysleeper/models/reminder.dart';
 import 'package:timezone/timezone.dart';
 
 class SleepModel extends ChangeNotifier {
-  final String name;
+  String _name;
   final TZDateTime dateTime;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
   List<Reminder> _reminders = [];
   Reminder? ongoing;
 
-  SleepModel(this.name, this.startTime, this.endTime)
+  SleepModel(this._name, this.startTime, this.endTime)
       : dateTime = tzTimeOfToday(startTime);
 
-  SleepModel.calcEndTime(this.name, this.startTime, sleepDuration)
+  SleepModel.calcEndTime(this._name, this.startTime, sleepDuration)
       : dateTime = tzTimeOfToday(startTime),
         endTime =
             TimeOfDay.fromDateTime(tzTimeOfToday(startTime).add(sleepDuration));
 
-  SleepModel.calcStartTime(this.name, this.endTime, sleepDuration)
+  SleepModel.calcStartTime(this._name, this.endTime, sleepDuration)
       : dateTime = tzTimeOfToday(endTime),
         startTime = TimeOfDay.fromDateTime(
             tzTimeOfToday(endTime).subtract(sleepDuration));
 
   /// For creation of a [SleepModel] when you already have a notification ID [reminders]
   SleepModel.reminders(
-      this.name, this.startTime, this.endTime, this.ongoing, this._reminders)
+      this._name, this.startTime, this.endTime, this.ongoing, this._reminders)
       : dateTime = tzTimeOfToday(startTime);
 
-  SleepModel.remindersFromJson(this.name, this.startTime, this.endTime,
+  SleepModel.remindersFromJson(this._name, this.startTime, this.endTime,
       this.ongoing, List<String> jsonReminders)
       : _reminders = List.from(
             jsonReminders.map((String element) => Reminder.fromJson(element))),
@@ -41,7 +41,7 @@ class SleepModel extends ChangeNotifier {
   factory SleepModel.fromJson(String jsonData) {
     var decodedData = json.decode(jsonData);
     return SleepModel.remindersFromJson(
-        decodedData['name'],
+        decodedData['_name'],
         TimeOfDay.fromDateTime(DateTime.parse(decodedData['startTime'])),
         TimeOfDay.fromDateTime(DateTime.parse(decodedData['endTime'])),
         Reminder.fromJson(decodedData['ongoing']),
@@ -55,9 +55,20 @@ class SleepModel extends ChangeNotifier {
     return (endTimeMins + minsInDay - startTimeMins) % minsInDay;
   }
 
+  double get durationInHours {
+    int minsInDay = 24 * 60;
+    int endTimeMins = endTime.hour * 60 + endTime.minute;
+    int startTimeMins = startTime.hour * 60 + startTime.minute;
+    return (endTimeMins + minsInDay - startTimeMins) % 24;
+  }
+
+  String get name {
+    return _name;
+  }
+
   String toJson() {
     return json.encode({
-      'name': name,
+      '_name': _name,
       'ongoing': ongoing,
       'reminders': _reminders,
       'startTime': timeOfToday(startTime).toString(),
@@ -92,6 +103,11 @@ class SleepModel extends ChangeNotifier {
         ongoing: true,
         timeoutAfter: durationInMins * 60 * 1000);
     this.ongoing = ongoing;
+    _save();
+  }
+
+  rename(String newName) {
+    _name = newName;
     _save();
   }
 
