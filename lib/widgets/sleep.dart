@@ -5,11 +5,35 @@ import '../common/timeofdayhelper.dart';
 import '../models/schedule.dart';
 import '../models/sleep.dart';
 
-class Sleep extends StatelessWidget {
+class Sleep extends StatefulWidget {
   final ScheduleModel schedule;
-  Sleep({Key? key, required this.schedule}) : super(key: key);
+  const Sleep({Key? key, required this.schedule}) : super(key: key);
 
-  late String newName;
+  @override
+  State<Sleep> createState() => _SleepState();
+}
+
+class _SleepState extends State<Sleep> {
+  late ScheduleModel schedule;
+  late FocusNode _focusNode;
+  bool _focused = false;
+  late FocusAttachment _focusAttachment;
+  String newName = '';
+
+  @override
+  void initState() {
+    _focusNode = FocusNode(debugLabel: 'Button');
+    _focusNode.addListener(_handleFocusChange);
+    _focusAttachment = _focusNode.attach(context);
+  }
+
+  void _handleFocusChange() {
+    if (_focusNode.hasFocus != _focused) {
+      setState(() {
+        _focused = _focusNode.hasFocus;
+      });
+    }
+  }
 
   _onDeletePressed(BuildContext context, SleepModel sleep) {
     schedule.remove(sleep);
@@ -43,30 +67,47 @@ class Sleep extends StatelessWidget {
     }
   }
 
+  Text _renderSubtitle(BuildContext context, SleepModel sleep) {
+    if (_focused) {
+      return Text(
+          "${dayTimeFormat(sleep.startTime)} - ${dayTimeFormat(sleep.endTime)} \nfor ${durationHourMinFormat(sleep.durationInMins)}");
+    }
+    return Text(
+        "${dayTimeFormat(sleep.startTime)} for ${durationHourMinFormat(sleep.durationInMins)}");
+  }
+
   @override
   Widget build(BuildContext context) {
+    _focusAttachment.reparent();
     return Consumer<SleepModel>(builder: (context, SleepModel sleep, _) {
-      return Center(
-          child: Card(
-        child: Column(children: [
-          ListTile(
-              leading: const Icon(Icons.hotel),
-              title: Text(sleep.name),
-              subtitle: Text(
-                  "${dayTimeFormat(sleep.startTime)} for ${durationHourMinFormat(sleep.durationInMins)}"),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                      onPressed: () => _onRenamePressed(context, sleep),
-                      icon: const Icon(Icons.edit)),
-                  IconButton(
-                      onPressed: () => _onDeletePressed(context, sleep),
-                      icon: const Icon(Icons.delete)),
-                ],
-              ))
-        ]),
-      ));
+      return Card(
+          child: Column(children: [
+        ListTile(
+            onTap: () {
+              if (_focused) {
+                _focusNode.unfocus();
+              } else {
+                _focusNode.requestFocus();
+              }
+            },
+            leading: Icon(
+              Icons.hotel,
+              color: Theme.of(context).iconTheme.color,
+            ),
+            title: Text(sleep.name),
+            subtitle: _renderSubtitle(context, sleep),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    onPressed: () => _onRenamePressed(context, sleep),
+                    icon: const Icon(Icons.edit)),
+                IconButton(
+                    onPressed: () => _onDeletePressed(context, sleep),
+                    icon: const Icon(Icons.delete)),
+              ],
+            ))
+      ]));
     });
   }
 }

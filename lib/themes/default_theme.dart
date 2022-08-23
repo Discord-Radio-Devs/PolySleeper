@@ -40,8 +40,11 @@ ThemeData getDefaultTheme(BuildContext context) {
             ))),
     dialogTheme: const DialogTheme(backgroundColor: Color(0xff201f47)),
     iconTheme: IconThemeData(
-      color: Colors.green[300]!,
+      color: Colors.deepPurple[400]!,
     ),
+    listTileTheme: ListTileThemeData(
+        iconColor: Colors.green[300]!,
+        visualDensity: VisualDensity.comfortable),
     timePickerTheme: TimePickerThemeData(
         helpTextStyle: TextStyle(color: Colors.indigo[300])),
     cardTheme: const CardTheme(
