@@ -225,21 +225,25 @@ class _MyHomePageState extends State<MyHomePage> {
         layoutBehavior: ButtonBarLayoutBehavior.padded,
         children: [
           FloatingActionButton(
+            heroTag: 'Add sleep to schedule FAB',
             onPressed: () => _addSleepToSchedule(context),
-            tooltip: 'Increment2',
+            tooltip: 'Add sleep to schedule',
             child: const Icon(Icons.bedroom_baby),
           ),
           FloatingActionButton(
+            heroTag: 'Create Reminder FAB',
             onPressed: () => _addReminderToSleep(context),
             tooltip: 'Create Reminder',
             child: const Icon(Icons.schedule),
           ),
           FloatingActionButton(
+            heroTag: 'Create Schedule FAB',
             onPressed: () => _createSchedule(context),
             tooltip: 'Create Schedule',
             child: const Icon(Icons.calendar_month),
           ),
           FloatingActionButton(
+            heroTag: 'Clear Schedule FAB',
             onPressed: () => _clearSchedule(context),
             tooltip: 'Clear Schedule',
             child: const Icon(Icons.delete),

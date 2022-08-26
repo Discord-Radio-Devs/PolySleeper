@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polysleeper/screens/sleepdetailpage.dart';
 import 'package:provider/provider.dart';
 
 import '../common/timeofdayhelper.dart';
@@ -84,11 +85,15 @@ class _SleepState extends State<Sleep> {
           child: Column(children: [
         ListTile(
             onTap: () {
-              if (_focused) {
-                _focusNode.unfocus();
-              } else {
-                _focusNode.requestFocus();
-              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Sleepdetailpage(sleep: sleep)));
+              // if (_focused) {
+              //   _focusNode.unfocus();
+              // } else {
+              //   _focusNode.requestFocus();
+              // }
             },
             leading: Icon(
               Icons.hotel,
