@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -11,8 +12,8 @@ class SleepModel extends ChangeNotifier {
   final TZDateTime dateTime;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
-  List<Reminder> _reminders = [];
-  Reminder? ongoing;
+  List<ReminderModel> _reminders = [];
+  ReminderModel? ongoing;
 
   SleepModel(this._name, this.startTime, this.endTime)
       : dateTime = tzTimeOfToday(startTime);
@@ -34,8 +35,8 @@ class SleepModel extends ChangeNotifier {
 
   SleepModel.remindersFromJson(this._name, this.startTime, this.endTime,
       this.ongoing, List<String> jsonReminders)
-      : _reminders = List.from(
-            jsonReminders.map((String element) => Reminder.fromJson(element))),
+      : _reminders = List.from(jsonReminders
+            .map((String element) => ReminderModel.fromJson(element))),
         dateTime = tzTimeOfToday(startTime);
 
   factory SleepModel.fromJson(String jsonData) {
@@ -44,8 +45,12 @@ class SleepModel extends ChangeNotifier {
         decodedData['_name'],
         TimeOfDay.fromDateTime(DateTime.parse(decodedData['startTime'])),
         TimeOfDay.fromDateTime(DateTime.parse(decodedData['endTime'])),
-        Reminder.fromJson(decodedData['ongoing']),
+        ReminderModel.fromJson(decodedData['ongoing']),
         List.castFrom(decodedData['reminders']));
+  }
+
+  UnmodifiableListView<ReminderModel> get reminders {
+    return UnmodifiableListView(_reminders);
   }
 
   int get durationInMins {
@@ -81,7 +86,7 @@ class SleepModel extends ChangeNotifier {
     String title, {
     String? notiBody,
   }) async {
-    Reminder reminder = Reminder(
+    ReminderModel reminder = ReminderModel(
         tzTimeOfToday(startTime).subtract(duration), title,
         notiBody: notiBody);
 
@@ -94,7 +99,7 @@ class SleepModel extends ChangeNotifier {
     _save();
   }
 
-  addOngoing(Reminder ongoing) async {
+  addOngoing(ReminderModel ongoing) async {
     ongoing.notiId = await periodicallyShowNotification(
         NotificationChannel.instant,
         ongoing.title,

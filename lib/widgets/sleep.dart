@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:polysleeper/screens/sleepdetailpage.dart';
+import 'package:polysleeper/screens/sleepdetailspage.dart';
+import 'package:polysleeper/widgets/screencontainer.dart';
 import 'package:provider/provider.dart';
 
 import '../common/timeofdayhelper.dart';
@@ -88,7 +89,8 @@ class _SleepState extends State<Sleep> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Sleepdetailpage(sleep: sleep)));
+                      builder: (context) => ScreenContainer(
+                          child: SleepDetailsPage(sleep: sleep))));
               // if (_focused) {
               //   _focusNode.unfocus();
               // } else {

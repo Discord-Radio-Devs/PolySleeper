@@ -110,9 +110,9 @@ Future<int> periodicallyShowNotification(
   return notiId;
 }
 
-removeReminders(List<Reminder> reminders) {
+removeReminders(List<ReminderModel> reminders) {
   try {
-    for (Reminder r in reminders) {
+    for (ReminderModel r in reminders) {
       flutterLocalNotificationsPlugin.cancel(r.notiId);
     }
   } catch (e) {

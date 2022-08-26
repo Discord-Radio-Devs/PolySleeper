@@ -12,7 +12,11 @@ class UserModel extends ChangeNotifier {
   static const String activeName = "%active";
 
   UserModel() : _schedules = <String, ScheduleModel>{};
-  UserModel.schedules(this._schedules);
+  UserModel.schedules(this._schedules) {
+    for (ScheduleModel schedule in _schedules.values) {
+      schedule.addListener(() => _save());
+    }
+  }
 
   ///modifiable view of the items in the sleeping schedule.
   UnmodifiableMapView<String, ScheduleModel> get schedules {

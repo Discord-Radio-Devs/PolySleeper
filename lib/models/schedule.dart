@@ -17,12 +17,20 @@ class ScheduleModel extends ChangeNotifier {
       : _sleeps = [],
         active = true;
 
-  ScheduleModel.sleeps(this.name, this.weekdays, this._sleeps);
+  ScheduleModel.sleeps(this.name, this.weekdays, this._sleeps) {
+    for (SleepModel sleep in _sleeps) {
+      sleep.addListener(() => _save());
+    }
+  }
 
   ScheduleModel.sleepsFromJson(
       this.name, this.weekdays, this.active, List<String> jsonSleeps)
       : _sleeps = List.from(
-            jsonSleeps.map((String element) => SleepModel.fromJson(element)));
+            jsonSleeps.map((String element) => SleepModel.fromJson(element))) {
+    for (SleepModel sleep in _sleeps) {
+      sleep.addListener(() => _save());
+    }
+  }
 
   /// An unmodifiable view of the items in the sleeping schedule.
   UnmodifiableListView<SleepModel> get sleeps {
@@ -58,7 +66,7 @@ class ScheduleModel extends ChangeNotifier {
   void add(SleepModel sleep) {
     _sleeps.add(sleep);
     sleep.addListener(() => _save());
-    sleep.addOngoing(Reminder(sleep.dateTime, sleep.name,
+    sleep.addOngoing(ReminderModel(sleep.dateTime, sleep.name,
         notiBody: "It's time for ${sleep.name}"));
     _save();
   }

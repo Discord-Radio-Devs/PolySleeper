@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: getDefaultTheme(context),
           home: const ScreenContainer(
-            child: MyHomePage(
+            child: HomePage(
               title: 'Poly Sleeper',
             ),
           )),

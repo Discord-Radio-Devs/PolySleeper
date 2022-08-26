@@ -9,16 +9,16 @@ import 'package:provider/provider.dart';
 
 import '../widgets/schedule.dart';
 
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final String title;
 
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({Key? key, required this.title}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   String newSleepName = '';
   void _createSchedule(BuildContext context) {
     ScheduleModel scheduleModel = ScheduleModel(
