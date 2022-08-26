@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:polysleeper/models/schedule.dart';
 import 'package:polysleeper/models/sleep.dart';
 import 'package:polysleeper/models/user.dart';
@@ -33,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SleepModel? sleepResult;
     if (nameResult == null) return;
 
+    if (!mounted) return;
     Map<String, bool>? toCalulate = await _getTimeInputs(context);
 
     if (toCalulate == null) return;
@@ -41,19 +41,22 @@ class _MyHomePageState extends State<MyHomePage> {
         .first
         .key) {
       case 'StartTime':
+        if (!mounted) return;
         sleepResult = await _calcStartTime(context, nameResult);
         break;
       case 'Duration':
+        if (!mounted) return;
         sleepResult = await _calcDuration(context, nameResult);
         break;
       case 'EndTime':
+        if (!mounted) return;
         sleepResult = await _calcEndTime(context, nameResult);
         break;
       default:
         return;
     }
 
-    if (sleepResult == null) return;
+    if (sleepResult == null || !mounted) return;
     Provider.of<UserModel>(context, listen: false)
         .schedules[UserModel.activeName]!
         .add(sleepResult);

@@ -4,7 +4,7 @@ class TimeInputPicker extends StatefulWidget {
   const TimeInputPicker({Key? key}) : super(key: key);
 
   @override
-  _TimeInputPickerState createState() => _TimeInputPickerState();
+  State<TimeInputPicker> createState() => _TimeInputPickerState();
 }
 
 class _TimeInputPickerState extends State<TimeInputPicker> {
@@ -15,7 +15,7 @@ class _TimeInputPickerState extends State<TimeInputPicker> {
   Widget build(BuildContext context) {
     return ToggleButtons(
       borderRadius: BorderRadius.circular(4.0),
-      constraints: BoxConstraints(minHeight: 36.0),
+      constraints: const BoxConstraints(minHeight: 36.0),
       isSelected: isSelected,
       onPressed: (index) {
         // Respond to button selection
@@ -44,7 +44,7 @@ class _TimeInputPickerState extends State<TimeInputPicker> {
         //   }
         // });
       },
-      children: [
+      children: const [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.0),
           child: Text('Start Time'),
