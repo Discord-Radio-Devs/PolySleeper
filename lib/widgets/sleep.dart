@@ -81,16 +81,18 @@ class _SleepState extends State<Sleep> {
   @override
   Widget build(BuildContext context) {
     _focusAttachment.reparent();
-    return Consumer<SleepModel>(builder: (context, SleepModel sleep, _) {
-      return Card(
-          child: Column(children: [
-        ListTile(
+    return Card(
+        child: Column(children: [
+      Consumer<SleepModel>(builder: (context, SleepModel sleep, _) {
+        return ListTile(
             onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ScreenContainer(
-                          child: SleepDetailsPage(sleep: sleep))));
+                              child: SleepDetailsPage(
+                            sleep: sleep,
+                          ))));
               // if (_focused) {
               //   _focusNode.unfocus();
               // } else {
@@ -103,18 +105,15 @@ class _SleepState extends State<Sleep> {
             ),
             title: Text(sleep.name),
             subtitle: _renderSubtitle(context, sleep),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () => _onRenamePressed(context, sleep),
-                    icon: const Icon(Icons.edit)),
-                IconButton(
-                    onPressed: () => _onDeletePressed(context, sleep),
-                    icon: const Icon(Icons.delete)),
-              ],
-            ))
-      ]));
-    });
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+              IconButton(
+                  onPressed: () => _onRenamePressed(context, sleep),
+                  icon: const Icon(Icons.edit)),
+              IconButton(
+                  onPressed: () => _onDeletePressed(context, sleep),
+                  icon: const Icon(Icons.delete)),
+            ]));
+      })
+    ]));
   }
 }

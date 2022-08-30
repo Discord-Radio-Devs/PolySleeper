@@ -175,14 +175,6 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) => const AlertDialog(
               title: Text('Choose your operators'),
-              // actions: [
-              //   TextButton(
-              //       child: Text("Cancel".toUpperCase()),
-              //       onPressed: () => Navigator.pop(context)),
-              //   TextButton(
-              //       child: Text("Confirm".toUpperCase()),
-              //       onPressed: () => Navigator.pop(context, newSleepName))
-              // ],
               content: Center(heightFactor: 1, child: TimeInputPicker()),
             ).build(context));
   }

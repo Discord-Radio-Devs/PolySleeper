@@ -1,17 +1,39 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
+import 'package:polysleeper/common/notifications.dart';
 import 'package:timezone/timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-class ReminderModel {
+class ReminderModel extends ChangeNotifier {
   int notiId = -1;
   final TZDateTime reminderTime;
-  final String title;
-  final String body;
+  String _title;
+  String _body;
 
-  ReminderModel(this.reminderTime, this.title, {String? notiBody})
-      : body = notiBody ?? "Reminder to go to sleep soon! 🏃‍♂️";
-  ReminderModel.notiId(this.body, this.reminderTime, this.title, this.notiId);
+  String get title {
+    return _title;
+  }
+
+  String get body {
+    return _body;
+  }
+
+  ReminderModel(this.reminderTime, this._title, {String? notiBody})
+      : _body = notiBody ?? "Reminder to go to sleep soon! 🏃‍♂️";
+  ReminderModel.notiId(this._body, this.reminderTime, this._title, this.notiId);
+
+  rename(String newTitle, String newBody) async {
+    removeReminder(this);
+
+    notiId = await periodicallyShowNotification(
+        NotificationChannel.instant, newTitle, newBody, reminderTime);
+    _title = newTitle;
+    _body = newBody;
+
+    notifyListeners();
+  }
 
   factory ReminderModel.fromJson(String jsonData) {
     var decodedData = json.decode(jsonData);

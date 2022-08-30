@@ -90,12 +90,14 @@ class SleepModel extends ChangeNotifier {
         tzTimeOfToday(startTime).subtract(duration), title,
         notiBody: notiBody);
 
+    debugPrint(reminder.reminderTime.toString());
     reminder.notiId = await periodicallyShowNotification(
         NotificationChannel.instant,
         reminder.title,
         reminder.body,
         reminder.reminderTime);
     _reminders.add(reminder);
+    reminder.notifyListeners();
     _save();
   }
 
@@ -122,6 +124,16 @@ class SleepModel extends ChangeNotifier {
       ongoing = null;
       _save();
     }
+  }
+
+  removeSleepReminder(ReminderModel reminder) {
+    if (!_reminders.contains(reminder)) {
+      throw Exception("$reminder could not be found in $name's reminders");
+    }
+    removeReminder(reminder);
+    _reminders.remove(reminder);
+    reminder.notifyListeners();
+    _save();
   }
 
   removeSleepReminders() {

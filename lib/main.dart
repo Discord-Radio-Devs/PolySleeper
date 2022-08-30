@@ -19,7 +19,7 @@ void main() async {
   final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-  // await SharedPreferencesHelper.clearAll();
+  await SharedPreferencesHelper.clearAll();
   await initializeNotifications();
 
   final Map<String, ScheduleModel> sexyAsses =
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
+        ChangeNotifierProvider<UserModel>.value(
             value: UserModel.schedules(loadedSchedules)),
       ],
       child: MaterialApp(

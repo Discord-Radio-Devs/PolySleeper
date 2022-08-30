@@ -120,6 +120,14 @@ removeReminders(List<ReminderModel> reminders) {
   }
 }
 
+removeReminder(ReminderModel reminder) {
+  try {
+    flutterLocalNotificationsPlugin.cancel(reminder.notiId);
+  } catch (e) {
+    debugPrint("Bitch whatcha tryin to delete 🤨");
+  }
+}
+
 clearAllNotifications() {
   flutterLocalNotificationsPlugin.cancelAll();
 }
